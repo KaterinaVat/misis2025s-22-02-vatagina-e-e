@@ -27,5 +27,6 @@ cv::Mat greyImage();
 
 cv::Mat gammaCorr(const cv::Mat& img, double& gamma);
 
-
+cv::Mat add_noise_gau(const cv::Mat& img, const int std);
+ 
 #endif

@@ -9,6 +9,8 @@
 #include <filesystem>
 #include <fstream> 
 #include <semcv/semcv.hpp>
+#include "opencv2/imgproc.hpp"
+#include <opencv2/core/types.hpp>
 
 
 std::string converting_numbers(int number, const int n) {
@@ -132,10 +134,21 @@ cv::Mat gammaCorr(const cv::Mat& img, double& gamma) {
 }
 
 cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
-  cv::Mat tgtimg;
+	cv::Mat tgtimg(256, 256, CV_8U,cv::Scalar(lev0));
+	cv::rectangle(tgtimg, cv::Point(23, 23), cv::Point(232, 232), cv::Scalar(lev1), -1);
+	cv::circle(tgtimg, cv::Point(128, 128), 83, cv::Scalar(lev2), -1);
   return tgtimg;
 }
 
+cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
+	double mean = 0;
+	cv::Mat mat(img.size(), CV_8U);
+	cv::randn(mat, cv::Scalar(mean), cv::Scalar(std));
+	cv::Mat res;
+	cv::add(img, mat, res);
+	return res;
+
+}
 
 
 
