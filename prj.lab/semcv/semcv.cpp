@@ -9,8 +9,54 @@
 #include <filesystem>
 #include <fstream> 
 #include <semcv/semcv.hpp>
-#include "opencv2/imgproc.hpp"
 #include <opencv2/core/types.hpp>
+#include <set>
+#include <vector>
+#include <iostream>
+#include "opencv2/imgcodecs.hpp"
+
+void imageStatistics(cv::Mat& img, cv::Mat& noiseImg) {
+
+	uchar x1 = img.at<uchar>(0, 0);
+	uchar x2 = img.at<uchar>(24, 24);
+	uchar x3 = img.at<uchar>(128, 128);
+
+	std::vector<uchar> scalars;
+	std::vector<int> statI;
+	std::vector<int> statN;
+
+	scalars.push_back(x1);
+	scalars.push_back(x2);
+	scalars.push_back(x3);
+
+
+	for (int i = 0; i < 3; i++) {
+		cv::Scalar mean_value_i, stddev_value_i;
+		cv::Scalar mean_value_n, stddev_value_n;
+		cv::Mat mask = (img == scalars[i]);
+		cv::meanStdDev(img, mean_value_i, stddev_value_i, mask);
+		cv::meanStdDev(noiseImg, mean_value_n, stddev_value_n, mask);
+
+	
+		statI.push_back(mean_value_i[0]);
+		statI.push_back(stddev_value_i[0]);
+
+		statN.push_back(mean_value_n[0]);
+		statN.push_back(stddev_value_n[0]);
+
+	}
+	std::cout << "Characteristics" << std::endl;
+	std::cout << "mean 1   " << "std 1	" << "mean 2	" << "std 2	" << "mean 3	" << "std 3		" << std::endl;
+	for (int i = 0; i < 6; i++) {
+		std::cout << statI[i]<< "	";
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < 6; i++) {
+		std::cout << statN[i] << "	";
+	}
+	cv::waitKey(0);
+
+}
 
 
 std::string converting_numbers(int number, const int n) {
@@ -142,13 +188,38 @@ cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
 
 cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	double mean = 0;
-	cv::Mat mat(img.size(), CV_8U);
-	cv::randn(mat, cv::Scalar(mean), cv::Scalar(std));
-	cv::Mat res;
-	cv::add(img, mat, res);
-	return res;
+	cv::Mat noise(img.size(), CV_32F);
+	cv::randn(noise, cv::Scalar(mean), cv::Scalar(std));
+	cv::Mat img_float;
+	img.convertTo(img_float, CV_32F);
+	cv::Mat noisy_img;
+	cv::add(img_float, noise, noisy_img);
+	cv::Mat noisy_img_8u; 
+	noisy_img.convertTo(noisy_img_8u, CV_8U); 
 
+	return noisy_img_8u;
+}
+
+ cv::Mat buildHist(cv::Mat& src) {
+	cv::Mat hist;
+	int histSize = 256;
+	float range[] = { 0, 256 };
+	const float* histRange = { range };
+
+	cv::calcHist(&src, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange);
+	int hist_w = 256, hist_h = 256;
+	cv::Mat histImage(hist_h, hist_w, CV_8UC1, cv::Scalar(255));
+	cv::normalize(hist, hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+
+	for (int i = 1; i < histSize; i++) {
+		cv::line(histImage, cv::Point((i - 1) * hist_w / histSize, hist_h - cvRound(hist.at<float>(i - 1))),
+			cv::Point(i * hist_w / histSize, hist_h - cvRound(hist.at<float>(i))),
+			cv::Scalar(0), 2, 8, 0);
+	}
+
+	return histImage;
 }
 
 
+ 
 

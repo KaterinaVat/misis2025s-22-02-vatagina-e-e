@@ -29,4 +29,7 @@ cv::Mat gammaCorr(const cv::Mat& img, double& gamma);
 
 cv::Mat add_noise_gau(const cv::Mat& img, const int std);
  
+void imageStatistics(cv::Mat& img, cv::Mat& noiseImg);
+
+cv::Mat buildHist(cv::Mat& src);
 #endif

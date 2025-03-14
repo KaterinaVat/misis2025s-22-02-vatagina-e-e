@@ -45,3 +45,9 @@ cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
 
   #### 3.5 Сохранить итоговый результат в файл по указанному в качестве параметра командной строки пути
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/final.png)
+
+  #### Сравнение характеристик исходного изображения и зашумленного
+  ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/table.png)
+
+  #### Коллаж гистограмм яркости зашумленных изображений
+  ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/histBRCollage.png)
