@@ -58,6 +58,14 @@ void imageStatistics(cv::Mat& img, cv::Mat& noiseImg) {
 
 }
 
+void imageStatistics_rgb(cv::Mat& img) {
+	std::cout << "Image statistics" << std::endl;
+	cv::Scalar mean_value, std_value;
+		cv::meanStdDev(img, mean_value, std_value);
+		std::cout << mean_value << "	" << std_value << std::endl;
+	
+}
+
 
 std::string converting_numbers(int number, const int n) {
 	int temp = number;
@@ -200,7 +208,7 @@ cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	return noisy_img_8u;
 }
 
- cv::Mat buildHist(cv::Mat& src) {
+ cv::Mat buildHist( cv::Mat& src) {
 	cv::Mat hist;
 	int histSize = 256;
 	float range[] = { 0, 256 };
@@ -209,7 +217,7 @@ cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	cv::calcHist(&src, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange);
 	int hist_w = 256, hist_h = 256;
 	cv::Mat histImage(hist_h, hist_w, CV_8UC1, cv::Scalar(255));
-	cv::normalize(hist, hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	cv::normalize(hist, hist, 0, histImage.rows-5, cv::NORM_MINMAX, -1, cv::Mat());
 
 	for (int i = 1; i < histSize; i++) {
 		cv::line(histImage, cv::Point((i - 1) * hist_w / histSize, hist_h - cvRound(hist.at<float>(i - 1))),
@@ -218,6 +226,208 @@ cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	}
 
 	return histImage;
+}
+
+ cv::Mat buildHistColor(cv::Mat& src) {
+	 cv::Mat b_hist, g_hist, r_hist;
+	 int histSize = 256;
+	 float range[] = { 0, 256 };
+	 const float* histRange = { range };
+
+	 std::vector<cv::Mat> bgr_planes;
+	 cv::split(src, bgr_planes);
+	 cv::calcHist(&bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange);
+	 cv::calcHist(&bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange); 
+	 cv::calcHist(&bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange); 
+	 int hist_w = 256, hist_h = 256;
+	
+
+	 cv::Mat histImage(hist_h, hist_w, CV_8UC3, cv::Scalar(0,0,0));
+
+	 cv::normalize(b_hist, b_hist, 0, histImage.rows - 5, cv::NORM_MINMAX, -1, cv::Mat());
+	 cv::normalize(g_hist, g_hist, 0, histImage.rows - 5, cv::NORM_MINMAX, -1, cv::Mat());
+	 cv::normalize(r_hist, r_hist, 0, histImage.rows - 5, cv::NORM_MINMAX, -1, cv::Mat());
+
+
+	 for (int i = 1; i < histSize; i++) {
+		 cv::line( histImage, 
+			 
+			 cv::Point((i - 1) * hist_w / histSize, hist_h - cvRound(b_hist.at<float>(i - 1))),
+			
+			 cv::Point(i * hist_w / histSize, hist_h - cvRound(b_hist.at<float>(i))),
+			 
+			 cv::Scalar(255, 0, 0), 2, 8, 0);
+
+		 cv::line(histImage, 
+
+			 cv::Point((i - 1) * hist_w / histSize, hist_h - cvRound(g_hist.at<float>(i - 1))),
+
+			 cv::Point(i * hist_w / histSize, hist_h - cvRound(g_hist.at<float>(i))),
+
+			 cv::Scalar(0, 255, 0), 2, 8, 0);
+
+		 cv::line(histImage, 
+
+			 cv::Point((i - 1) * hist_w / histSize, hist_h - cvRound(r_hist.at<float>(i - 1))),
+
+			 cv::Point(i * hist_w / histSize, hist_h - cvRound(r_hist.at<float>(i))), 
+
+			 cv::Scalar(0, 0, 255), 2, 8, 0); 
+
+	 }
+
+	 return histImage;
+ }
+
+cv::Mat autocontrast(const cv::Mat& img, const double q_black, const double q_white, bool flag) {
+	if (img.type() != CV_8UC1) {
+		std::cerr << "Image is not grey" << std::endl;
+	}
+	cv::Mat image = img;
+    cv::Mat hist =buildHist(image);
+	double minVal, maxVal;
+	cv::minMaxLoc(img, &minVal, &maxVal);
+	double blackLevel = minVal + (maxVal - minVal) * q_black;
+	double whiteLevel = minVal + (maxVal - minVal) * q_white;
+	cv::Mat result;
+	double scale = 255.0 / (whiteLevel - blackLevel);
+	double offset = -blackLevel * scale;
+	img.convertTo(result, CV_8UC1, scale, offset);
+	cv::Mat histR = buildHist(result);
+	if (flag == true) {
+		cv::imshow("Img", img);
+		cv::waitKey(0);
+		cv::imshow("hist", hist);
+		cv::waitKey(0);
+		cv::imshow("rez", result);
+		cv::waitKey(0);
+		cv::imshow("histR", histR);
+		cv::waitKey(0);
+	}
+	return result;
+ }
+
+cv::Mat autocontrastColor(const cv::Mat& img, const double q_blue, const double q_red, const double q_green, bool flag) {
+	if (img.channels() != 3) {
+		std::cerr << "Image must have 3 channels (BGR)." << std::endl;
+		return cv::Mat();
+	}
+	cv::Mat image = img;
+	std::vector<cv::Mat> bgr_planes;
+	cv::split(img, bgr_planes);
+	double minValB, maxValB, minValG, maxValG, minValR, maxValR;
+	cv::minMaxLoc(bgr_planes[0], &minValB, &maxValB);
+	cv::minMaxLoc(bgr_planes[1], &minValG, &maxValG);
+	cv::minMaxLoc(bgr_planes[2], &minValR, &maxValR);
+
+	double blackLevelB = minValB + (maxValB - minValB) * q_blue;
+	double whiteLevelB = minValB + (maxValB - minValB) * (1 - q_blue);
+
+	double blackLevelR = minValR + (maxValR - minValR) * q_red;
+	double whiteLevelR = minValR + (maxValR - minValR) * (1 - q_red);
+
+	double blackLevelG = minValG + (maxValG - minValG) * q_green;
+	double whiteLevelG = minValG + (maxValG - minValG) * (1 - q_green);
+
+
+	double scaleB = 255.0 / (whiteLevelB - blackLevelB);
+	double offsetB = -blackLevelB * scaleB;
+
+	double scaleG = 255.0 / (whiteLevelG - blackLevelG);
+	double offsetG = -blackLevelG * scaleG;
+
+	double scaleR = 255.0 / (whiteLevelR - blackLevelR);
+	double offsetR = -blackLevelR * scaleR;
+
+
+	cv::Mat resB, resG, resR;
+	bgr_planes[0].convertTo(resB, CV_8UC1, scaleB, offsetB);
+	bgr_planes[1].convertTo(resG, CV_8UC1, scaleG, offsetG);
+	bgr_planes[2].convertTo(resR, CV_8UC1, scaleR, offsetR);
+
+	std::vector<cv::Mat> resultChannels = { resB, resG, resR };
+	cv::Mat resultImage;
+	cv::merge(resultChannels, resultImage);
+
+
+	if (flag) {
+		cv::imshow("Original Image", img);
+		cv::waitKey(0);
+
+		cv::Mat hist = buildHistColor(image);
+		cv::imshow("Original Histogram", hist);
+		cv::waitKey(0);
+
+		cv::imshow("Autocontrasted Image", resultImage);
+		cv::waitKey(0);
+
+		cv::Mat histR = buildHistColor(resultImage);
+		cv::imshow("Autocontrasted Histogram", histR);
+		cv::waitKey(0);
+	}
+
+	return resultImage;
+}
+
+
+cv::Mat autocontrast_rgb(const cv::Mat& img, const double q_black, const double q_white, bool flag) {
+	if (img.channels() != 3) {
+		std::cerr << "Image not 3 channels" << std::endl;
+	}
+	cv::Mat image = img;
+	cv::Mat hist = buildHistColor(image);
+
+	std::vector<cv::Mat> bgr_planes;
+	cv::split(img, bgr_planes);
+
+	double minValB, maxValB, minValG, maxValG, minValR, maxValR;
+	cv::minMaxLoc(bgr_planes[0], &minValB, &maxValB);
+	cv::minMaxLoc(bgr_planes[1], &minValG, &maxValG);
+	cv::minMaxLoc(bgr_planes[2], &minValR, &maxValR);
+
+	double blueLevel = minValB + (maxValB - minValB) * q_black;
+	double whiteLevelB = minValB + (maxValB - minValB) * q_white;
+
+	double redLevel = minValR + (maxValR - minValR) * q_black;
+	double whiteLevelR = minValR + (maxValR - minValR) * q_white;
+
+
+	double greenLevel = minValG + (maxValG - minValG) * q_black;
+	double whiteLevelG = minValG + (maxValG - minValG) * q_white;
+
+	double scaleB = 255.0 / (whiteLevelB - blueLevel);
+	double scaleG = 255.0 / (whiteLevelG - greenLevel);
+	double scaleR = 255.0 / (whiteLevelR - redLevel);
+
+	double offsetB = -blueLevel * scaleB;
+	double offsetG = -greenLevel * scaleG;
+	double offsetR = -redLevel * scaleR;
+
+	cv::Mat resB, resG, resR;
+
+	bgr_planes[0].convertTo(resB, CV_8UC1, scaleB, offsetB);
+	bgr_planes[1].convertTo(resG, CV_8UC1, scaleG, offsetG);
+	bgr_planes[2].convertTo(resR, CV_8UC1, scaleR, offsetR);
+	std::vector<cv::Mat> result = { resB, resG, resR };
+	cv::Mat resultImage;
+	cv::merge(result, resultImage);
+
+	cv::Mat histR = buildHistColor(resultImage);
+
+	if (flag) {
+		//cv::imshow("Img", img);
+		//cv::waitKey(0);
+		//cv::imshow("hist", hist);
+		//cv::waitKey(0);
+
+		cv::imshow("Autocontrasted limited Image", resultImage);  
+		cv::waitKey(0);
+
+		cv::imshow("Autocontrasted limited Histogram", histR); 
+		cv::waitKey(0);
+	}
+	return img;
+
 }
 
 

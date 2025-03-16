@@ -30,6 +30,18 @@ cv::Mat gammaCorr(const cv::Mat& img, double& gamma);
 cv::Mat add_noise_gau(const cv::Mat& img, const int std);
  
 void imageStatistics(cv::Mat& img, cv::Mat& noiseImg);
+void imageStatistics_rgb(cv::Mat& img);
 
 cv::Mat buildHist(cv::Mat& src);
+
+cv::Mat buildHistColor(cv::Mat& src); 
+
+
+cv::Mat autocontrast(const cv::Mat& img, const double q_black, const double q_white, bool flag = false);
+
+cv::Mat autocontrastColor(const cv::Mat& img, const double q_blue, const double q_red, const double q_green, bool flag = false);
+
+cv::Mat autocontrast_rgb(const cv::Mat& img, const double q_black, const double q_white, bool flag = false);
+
+
 #endif

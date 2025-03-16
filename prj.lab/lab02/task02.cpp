@@ -74,22 +74,20 @@ int main(int argc, char* argv[]) {
 	cv::imshow("hist collage", histCollage);
 	cv::waitKey(0);
 
-	std::string histPath = "C:/c++/misis2025s-3-improc/assests/histBRCollage.png";
-	cv::imwrite(histPath, histCollage);
 
-	//std::string folderPath = argv[1];
-	//if (!std::filesystem::exists(folderPath)) {
-	//std::cerr << "Following folder " << folderPath << " is not exist" << std::endl;
-	//}
+	std::string folderPath = argv[1];
+	if (!std::filesystem::exists(folderPath)) {
+	std::cerr << "Following folder " << folderPath << " is not exist" << std::endl;
+	}
 
-	//std::string folder = argv[1] + std::string("\\") + std::string("noiseCollage.png");
-	//
-	//if (cv::imwrite(folder, final_collage)) {
-	//	std::cout << "Image was successfully saved by the pass " << folder << std::endl;
-	//}
-	//else {
-	//	std::cout << "Image was not saved by the pass " << folder << std::endl;
-	//}  
+	std::string folder = argv[1] + std::string("\\") + std::string("noiseCollage.png");
+	
+	if (cv::imwrite(folder, final_collage)) {
+		std::cout << "Image was successfully saved by the pass " << folder << std::endl;
+	}
+	else {
+		std::cout << "Image was not saved by the pass " << folder << std::endl;
+	}  
 
 
 
