@@ -15,6 +15,7 @@
 #include <iostream>
 #include "opencv2/imgcodecs.hpp"
 
+
 void imageStatistics(cv::Mat& img, cv::Mat& noiseImg) {
 
 	uchar x1 = img.at<uchar>(0, 0);
@@ -279,7 +280,7 @@ cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	 return histImage;
  }
 
-cv::Mat autocontrast(const cv::Mat& img, const double q_black, const double q_white, bool flag) {
+cv::Mat autocontrast(const cv::Mat& img, const double q_black, const double q_white, bool flag ) {
 	if (img.type() != CV_8UC1) {
 		std::cerr << "Image is not grey" << std::endl;
 	}
