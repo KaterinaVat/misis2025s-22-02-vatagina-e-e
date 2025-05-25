@@ -11,11 +11,13 @@
 #include <ctime>
 #include <cmath>
 
+// генерация картинки и ее сохранение по пути
+
 
 cv::Mat generateImage(int tile_size,
     int min_elps_width, int max_elps_width,
     int min_elps_height, int max_elps_height,
-    int bg_color, int elps_color) {
+    int bg_color, int elps_color, cv::FileStorage fsJSON) {
 
     const int margin = 32;
     cv::Mat image(tile_size, tile_size, CV_8U, cv::Scalar(bg_color));
@@ -46,14 +48,20 @@ cv::Mat generateImage(int tile_size,
         rotAngle, 0, 360,
         elps_color, -1);
 
-
+    fsJSON << "{"
+        << "elps_angle" << rotAngle
+        << "elps_width" << static_cast<int>(safe_width)
+        << "elps_height" << static_cast<int>(safe_height)
+        << "elps_x" << static_cast<int>(x)
+        << "elps_y" << static_cast<int>(y)
+        << "}";
 
     return image;
 }
 
 cv::Mat concateImages(int n, int min_elps_width, int max_elps_width,
     int min_elps_height, int max_elps_height,
-    int bg_color, int elps_color) {
+    int bg_color, int elps_color, cv::FileStorage fsJSON) {
 
     const int tile_size = 256;
     const int collage_size = tile_size * n;
@@ -64,10 +72,14 @@ cv::Mat concateImages(int n, int min_elps_width, int max_elps_width,
             cv::Mat tile = generateImage(tile_size,
                 min_elps_width, max_elps_width,
                 min_elps_height, max_elps_height,
-                bg_color, elps_color);
+                bg_color, elps_color, fsJSON);
 
             cv::Rect roi(i * tile_size, j * tile_size, tile_size, tile_size);
             tile.copyTo(collage(roi));
+           fsJSON << "pic_coordinates" << "{"
+                << "col" << i * 256
+                << "row" << j * 256
+                << "}";
         }
     }
 
@@ -109,14 +121,25 @@ int estimateBlurSize(const cv::Mat& image, int known_blur = 25) {
     return static_cast<int>(std::round(blurSize));
 }
 
+cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
+    double mean = 0;
+    cv::Mat noise(img.size(), CV_32F);
+    cv::randn(noise, cv::Scalar(mean), cv::Scalar(std));
+    cv::Mat img_float;
+    img.convertTo(img_float, CV_32F);
+    cv::Mat noisy_img;
+    cv::add(img_float, noise, noisy_img);
+    cv::Mat noisy_img_8u;
+    noisy_img.convertTo(noisy_img_8u, CV_8U);
 
+    return noisy_img_8u;
+}
 
-int main() {
+void imageGeneration(std::string f) {
     std::srand(std::time(nullptr));
     cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
 
-    std::string f = "C:\\c++\\misis2025s-3-improc\\prj.lab\\lab04\\runScript.json";
- 
+
     cv::FileStorage fs(f, cv::FileStorage::READ);
     std::string output_path = (std::string) fs["output_path"];
     int n = (int)fs["n"];
@@ -129,8 +152,31 @@ int main() {
     int min_elps_height = (int)fs["min_elps_height"];
     int max_elps_height = (int)fs["max_elps_height"];
 
+
+    std::string imagePath = output_path;
+    std::string idealJSON = output_path.substr(0, output_path.size() - 4) + "I.json";
+
+
+    cv::FileStorage fsIJSON(idealJSON, cv::FileStorage::WRITE | cv::FileStorage::FORMAT_JSON);
+    if (!fsIJSON.isOpened()) {
+        std::cerr << "Can not open jsonFile: " << idealJSON << std::endl;
+    }
+    fsIJSON << "blur_size" << blur_size;
+    fsIJSON << "colors" << "{";
+    fsIJSON << "bg_color" << bg_color; 
+    fsIJSON << "elps_color" << elps_color;
+    fsIJSON << "}";
+    fsIJSON << "noise_std" << noise_std;
+    fsIJSON << "size_of_collage" << 255;
+    fsIJSON << "objects" << "[";
+
+
     cv::Mat collage = concateImages(n, min_elps_width, max_elps_width,
-    min_elps_height, max_elps_height, bg_color, elps_color);
+    min_elps_height, max_elps_height, bg_color, elps_color, fsIJSON);
+
+    fsIJSON << "]";
+    fsIJSON.release();
+    std::cout << "jsonchick esti" << std::endl;
 
     cv::GaussianBlur(collage, collage, cv::Size(blur_size, blur_size), 0);
 
@@ -138,93 +184,12 @@ int main() {
     cv::imshow("Generated Collage", noisedCollage);
     cv::waitKey(0);
     
-    std::string imagePath = output_path +"\\collage_gt.png";
-    std::string jsonPath = output_path +"\\collage_gt.json";
 
 
     if (!cv::imwrite(imagePath, noisedCollage)) {
         std::cerr << "Error: save image " << imagePath << std::endl;
-        return -1;
     }
     std::cout << "Image saved: " << imagePath << std::endl;
-
-    cv::FileStorage fsJSON(jsonPath, cv::FileStorage::WRITE | cv::FileStorage::FORMAT_JSON);
-    if (!fsJSON.isOpened()) {
-        std::cerr << "Can not open jsonFile: " << jsonPath << std::endl;
-        return -1;
-    }
-
-    fsJSON << "blur_size" << blur_size;
-
-    fsJSON << "colors" << "{";
-    fsJSON << "bg_color" << bg_color;
-    fsJSON << "elps_color" << elps_color;
-    fsJSON << "}";
-
-    fsJSON << "noise_std" << noise_std;
-    fsJSON << "size_of_collage" << 255;
-
-    fsJSON << "objects" << "[";
-
-    
-
-    // обработка
-    // 1 бинаризация
-
-    cv::Mat binaryCollage;
-    cv::threshold(noisedCollage, binaryCollage, 80, 255, cv::THRESH_BINARY);
-    cv::imshow("Binary image", binaryCollage);
-    cv::waitKey(0);
-
-    std::string binaryPath = "C:\\c++\\misis2025s-3-improc\\assests\\lab4\\binaryImage.png";
-    cv::imwrite(binaryPath, binaryCollage);
-
-
-    int kernelSize = 5;
-    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2 * kernelSize + 1, 2 * kernelSize + 1), cv::Point(kernelSize, kernelSize));
-    cv::Mat openedImage;
-    morphologyEx(binaryCollage, openedImage, cv::MORPH_OPEN, kernel);
-    cv::imshow("Opened image", openedImage);
-    cv::waitKey(0);
-
-    std::string openedPath = "C:\\c++\\misis2025s-3-improc\\assests\\lab4\\openedImage.png";
-    cv::imwrite(openedPath, openedImage);
-
-    cv::Mat labels;
-    cv::Mat stats;
-    cv::Mat centroids;
-    int numComponents = connectedComponentsWithStats(openedImage, labels, stats, centroids, 8, CV_32S);
-
-    cv::Mat output;
-    cvtColor(openedImage, output, cv::COLOR_GRAY2BGR);
-
-    for (int i = 1; i < numComponents; ++i) {
-        cv::Mat mask = labels == i;
-        std::vector<std::vector<cv::Point>> contours;
-        findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-        if (!contours.empty() && contours[0].size() >= 5) {
-            cv::RotatedRect ellipse = fitEllipse(contours[0]);
-            cv::ellipse(output, ellipse, cv::Scalar(0, 255, 0), 2);
-            fsJSON << "{"
-                << "elps_angle" << ellipse.angle
-                << "elps_width" << static_cast<int>(ellipse.size.width)
-                << "elps_height" << static_cast<int>(ellipse.size.height)
-                << "elps_x" << static_cast<int>(ellipse.center.x)
-                << "elps_y" << static_cast<int>(ellipse.center.y)
-                << "}"
-                << "pic_coordinates" << "{"
-                << "col" << i % n * 256
-                << "row" << i / n * 256
-                    << "}";
-        }
-    }
-    fsJSON << "]";
-    fsJSON.release();
-    imshow("Ellipses", output);
-    cv::waitKey(0);
-    std::string ellipsesPath = "C:\\c++\\misis2025s-3-improc\\assests\\lab4\\ellipsesImage.png";
-    cv::imwrite(ellipsesPath, output);
-
-
-    return 0;
+ 
 }
+

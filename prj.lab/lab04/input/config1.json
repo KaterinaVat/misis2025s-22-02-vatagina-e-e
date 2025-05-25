@@ -1,0 +1,12 @@
+{
+    "output_path": "C:\\c++\\misis2025s-3-improc\\prj.lab\\lab04\\output\\collage\\collage.png",
+    "n": 3,
+    "bg_color": 0,
+    "elps_color": 255,
+    "noise_std": 12,
+    "blur_size": 15,
+    "min_elps_width": 111,
+    "max_elps_width": 31,
+    "min_elps_height": 92,
+    "max_elps_height": 118
+}
