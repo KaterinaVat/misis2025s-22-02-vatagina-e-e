@@ -1,28 +1,58 @@
-cmake_minimum_required(VERSION 3.20)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
-
-set(CMAKE_VERBOSE_MAKEFILE TRUE)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-
-set(CMAKE_TOOLCHAIN_FILE 
-    "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    CACHE STRING "Vcpkg toolchain file"
-)
-set(CMAKE_GENERATOR "Ninja" CACHE INTERNAL "")
-
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-foreach(config Debug Release RelWithDebInfo)
-    string(TOUPPER ${config} config_upper)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} 
-        ${CMAKE_CURRENT_SOURCE_DIR}/bin.${config})
-endforeach()
-
-find_package(OpenCV REQUIRED)
-
-
 add_subdirectory(libname)
 add_subdirectory(test)
+
+
+
+if(WIN32)
+    set(OpenCV_RUNTIME_PATH "${OpenCV_DIR}/../../bin")
+else()
+    set(OpenCV_RUNTIME_PATH "${OpenCV_DIR}/../../lib")
+endif()
+
+if(INSTALL_TARGET)
+    install(DIRECTORY "${OpenCV_RUNTIME_PATH}/"
+      DESTINATION bin
+      FILES_MATCHING PATTERN "*opencv_core*"
+    )
+    install(DIRECTORY "${OpenCV_RUNTIME_PATH}/"
+      DESTINATION bin
+      FILES_MATCHING PATTERN "*opencv_highgui*"
+    )
+    install(DIRECTORY "${OpenCV_RUNTIME_PATH}/"
+      DESTINATION bin
+      FILES_MATCHING PATTERN "*opencv_imgproc*"
+    )
+endif()
+
+# Исполняемые файлы
+install(TARGETS detector cv_task01 cv_task02
+    RUNTIME DESTINATION bin
+    BUNDLE DESTINATION bin
+)
+
+# Заголовочные файлы библиотеки
+install(DIRECTORY libname/include/
+    DESTINATION include/libname
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+)
+
+# Примеры с фотографиями
+install(DIRECTORY example/
+    DESTINATION share/${PROJECT_NAME}/examples
+)
+
+# Тесты
+install(DIRECTORY test/
+    DESTINATION share/${PROJECT_NAME}/test
+    PATTERN "CMakeLists.txt" EXCLUDE
+)
+
+# CMake-конфиги
+install(DIRECTORY cmake/
+    DESTINATION share/${PROJECT_NAME}/cmake
+)
+
+# Документация
+install(FILES LICENSE README.md
+    DESTINATION share/doc/${PROJECT_NAME}
+)
