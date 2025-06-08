@@ -190,6 +190,7 @@ void imageGeneration(std::string f) {
         std::cerr << "Error: save image " << imagePath << std::endl;
     }
     std::cout << "Image saved: " << imagePath << std::endl;
+    cv::imwrite("image_from_laba6.png", noisedCollage);
  
 }
 
