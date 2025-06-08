@@ -8,10 +8,10 @@
 int main() {
 
     cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
-    std::ifstream f("C:\\c++\\misis2025s-3-improc\\prj.cv\\examples\\input_data.txt");
+    std::ifstream f("../example/input_data.txt");
 
     if (!f.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
+        std::cerr << "Error opening file!" << std::endl; 
         return 1;
     }
 

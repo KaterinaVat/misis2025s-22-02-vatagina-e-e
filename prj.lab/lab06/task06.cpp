@@ -71,7 +71,7 @@ std::vector<Blob> blob_detector(
 	const std::vector<cv::Mat>& dogs,
 	const std::vector<double>& sigmas,
 	double scale = 1.0,
-	float threshold = 0.03f
+	float threshold = 0.2f
 ) {
 	std::vector<Blob> blobs;
 
