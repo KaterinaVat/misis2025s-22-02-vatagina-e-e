@@ -136,7 +136,7 @@ cv::Mat concateImages(cv::Mat& imageGradVertNew, cv::Mat& smoothed_plot) {
 	return final;
 }
 
-int count_money(cv::Mat input_image) {
+int count_money(cv::Mat input_image, bool flag = false) {
 	double w = input_image.rows * 0.4;
 	double h = input_image.cols * 0.3;
 	cv::Rect roi(w, h, 150, 550);
@@ -204,8 +204,10 @@ int count_money(cv::Mat input_image) {
 	cv::Size textSize = cv::getTextSize(number, fontFace, fontScale, thickness, &baseline);
 	cv::Point textOrg(input_image.cols - textSize.width - 20, textSize.height + 20);
 	cv::putText(input_image, number, textOrg, fontFace, fontScale, color, thickness);
-	//cv::imshow("Result", input_image);
-	//cv::waitKey(0);
+	if (flag == true) {
+		cv::imshow("Result", input_image);
+		cv::waitKey(0);
+	}
 	cv::imwrite("Result.png", input_image);
 	return ans;
 

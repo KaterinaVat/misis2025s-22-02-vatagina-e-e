@@ -3,12 +3,19 @@
 #include <libname/include/libname.hpp>
 #include <iostream>
 #include <fstream>
-#include <string>   
+#include <string> 
 
-int main() {
+
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        std::cerr << "Wrong input format" << std::endl;
+        std::cerr << " --txt  path" << std::endl;
+        return 0;
+    }
 
     cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
-    std::ifstream f("../example/input_data.txt");
+    std::string file_name = std::string(argv[1]);
+    std::ifstream f(file_name);
 
     if (!f.is_open()) {
         std::cerr << "Error opening file!" << std::endl; 
@@ -34,12 +41,12 @@ int main() {
             cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
         else
             gray = image.clone();
-
-        int count_coins = count_money(gray);
+        bool flag = false;
+        int count_coins = count_money(gray, flag);
 
         double error = std::abs(count_coins - ground_truth) / static_cast<double>(ground_truth);
         double acs = (1.0 - error) * 100.0;
-        std::cout << "test " << n << "        " << count_coins << "         " << ground_truth << "                "<<acs<<  std::endl;
+        std::cout << "test " << n << "                " << count_coins << "         " << ground_truth << "                "<<acs<<  std::endl;
 
     }
 

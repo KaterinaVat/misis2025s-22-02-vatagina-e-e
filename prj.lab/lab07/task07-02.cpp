@@ -29,7 +29,7 @@ int main(/*char argc, char** argv*/) {
 
 //еще опенсв
 	cv::Mat edges;
-	cv::Canny(image, edges, 0, 256);  // нижний и верхний порог
+	cv::Canny(image, edges, 0, 256);  
 	cv::imshow("Canny", edges);
 	cv::waitKey(0);
 

@@ -1,5 +1,5 @@
-add_executable(cv_task01 test1.cpp )
-add_executable(cv_task02 test02.cpp)
-target_link_libraries(cv_task01 PUBLIC detector)
-target_link_libraries(cv_task02 PUBLIC detector)
+add_executable(program_test test1.cpp )
+add_executable(coins_number test02.cpp)
+target_link_libraries(program_test PUBLIC detector)
+target_link_libraries(coins_number PUBLIC detector)
 

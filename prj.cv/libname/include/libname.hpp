@@ -14,4 +14,4 @@ void suppression_not_max(cv::Mat& plot, std::vector<float>& varience, float& max
 
 cv::Mat concateImages(cv::Mat& imageGradVertNew, cv::Mat& smoothed_plot);
 
-int count_money(cv::Mat input_image);
+int count_money(cv::Mat input_image, bool flag);

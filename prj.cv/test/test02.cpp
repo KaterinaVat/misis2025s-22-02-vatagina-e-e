@@ -4,15 +4,17 @@
 #include <libname/include/libname.hpp>
 
 int main(int argc, char** argv) {
-	if (argc != 2) {
+	if (argc > 3 ) {
+
 		std::cerr << "Wrong input format" << std::endl;
 		std::cerr << " -- image path" << std::endl;
 		return 0;
 	}
+	bool flag = false;
 
 	std::string input_image= std::string(argv[1]);
 	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
-	//std::string input_image = "C:\\c++\\misis2025s-3-improc\\prj.cv\\examples\\IMG_6448.png";
+
 
 	cv::Mat image = cv::imread(input_image, cv::IMREAD_COLOR);
 
@@ -22,7 +24,11 @@ int main(int argc, char** argv) {
 	else
 		gray = image.clone();
 
-	int ans = count_money(gray);
+	if (argc == 3) {
+		flag = true;
+	}
+
+	int ans = count_money(gray, flag);
 
 	std::cout << "Count of coins : " << ans;
 

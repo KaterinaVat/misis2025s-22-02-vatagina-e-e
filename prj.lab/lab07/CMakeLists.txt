@@ -9,5 +9,6 @@ add_executable(task0702 "task07-02.cpp")
 target_link_libraries(task0702 PUBLIC semcv)
 
 
-add_executable(boundaries "boundaries.cpp")
-target_link_libraries(boundaries PUBLIC ${OpenCV_LIBS})
+
+add_library(boundaries "boundaries.cpp")
+target_link_libraries( boundaries PUBLIC ${OpenCV_LIBS})
