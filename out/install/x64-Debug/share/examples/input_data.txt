@@ -1,8 +1,0 @@
-C:\c++\misis2025s-3-improc\prj.cv\examples\IMG_6448.png 7
-C:\c++\misis2025s-3-improc\prj.cv\examples\1.png 1
-C:\c++\misis2025s-3-improc\prj.cv\examples\2.png 2
-C:\c++\misis2025s-3-improc\prj.cv\examples\3.png 2
-C:\c++\misis2025s-3-improc\prj.cv\examples\4.png 4
-C:\c++\misis2025s-3-improc\prj.cv\examples\5.png 5
-C:\c++\misis2025s-3-improc\prj.cv\examples\6.png 4
-C:\c++\misis2025s-3-improc\prj.cv\examples\7.png 5
