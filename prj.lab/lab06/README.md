@@ -46,7 +46,7 @@ std::vector<Blob> blob_detector(const std::vector<cv::Mat>& dogs, ...) {
     }
 }
 ```
-![](https://github.com/KaterinaVat/misis2025s-22-02-vatagina-e-e/edit/main/assests/laba6/blobs_pyramid_detected.png)
+![Результат работы алгоритма](https://github.com/KaterinaVat/misis2025s-22-02-vatagina-e-e/blob/main/assests/lab6/blobs_pyramid_detected.png)
 2. Ключевые параметры
 Параметр	Значение	Описание
 Уровней пирамиды	5	От исходного до 1/16 размера
