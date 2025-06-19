@@ -1,5 +1,5 @@
-# Отчет по лабораторной работе №1
-#### Фурмулировка задания: 1 добавьте в библиотеку semcv функцию
+# РћС‚С‡РµС‚ РїРѕ Р»Р°Р±РѕСЂР°С‚РѕСЂРЅРѕР№ СЂР°Р±РѕС‚Рµ в„–1
+#### Р¤СѓСЂРјСѓР»РёСЂРѕРІРєР° Р·Р°РґР°РЅРёСЏ: 1 РґРѕР±Р°РІСЊС‚Рµ РІ Р±РёР±Р»РёРѕС‚РµРєСѓ semcv С„СѓРЅРєС†РёСЋ
 ``` 
 
 cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
@@ -9,9 +9,9 @@ cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
   return tgtimg;
 }
 ```
- ![Пример работы функции gen_tgtimg00](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/func_t.png)
+ ![РџСЂРёРјРµСЂ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё gen_tgtimg00](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/func_t.png)
 
- #### Фурмулировка задания: 2 добавьте в библиотеку semcv функцию
+ #### Р¤СѓСЂРјСѓР»РёСЂРѕРІРєР° Р·Р°РґР°РЅРёСЏ: 2 РґРѕР±Р°РІСЊС‚Рµ РІ Р±РёР±Р»РёРѕС‚РµРєСѓ semcv С„СѓРЅРєС†РёСЋ
  ```
  cv::Mat add_noise_gau(const cv::Mat& img, const int std) {
 	double mean = 0;
@@ -22,32 +22,32 @@ cv::Mat gen_tgtimg00(const int lev0, const int lev1, const int lev2) {
 	return res;
 }
  ```
- ![Пример работы функции add_noise_gau](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/add_noise.png)
+ ![РџСЂРёРјРµСЂ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё add_noise_gau](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/add_noise.png)
 
 
- #### Фурмулировка задания: 3 написать тестовое консольное приложение task02, которое
- #### 3.1 генерирует тестовые изображения для 4-х наборов уровней яркости фона-квадрата-круга ([0,127,255], [20,127,235], [55,127,200], [90,127,165]) 
+ #### Р¤СѓСЂРјСѓР»РёСЂРѕРІРєР° Р·Р°РґР°РЅРёСЏ: 3 РЅР°РїРёСЃР°С‚СЊ С‚РµСЃС‚РѕРІРѕРµ РєРѕРЅСЃРѕР»СЊРЅРѕРµ РїСЂРёР»РѕР¶РµРЅРёРµ task02, РєРѕС‚РѕСЂРѕРµ
+ #### 3.1 РіРµРЅРµСЂРёСЂСѓРµС‚ С‚РµСЃС‚РѕРІС‹Рµ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РґР»СЏ 4-С… РЅР°Р±РѕСЂРѕРІ СѓСЂРѕРІРЅРµР№ СЏСЂРєРѕСЃС‚Рё С„РѕРЅР°-РєРІР°РґСЂР°С‚Р°-РєСЂСѓРіР° ([0,127,255], [20,127,235], [55,127,200], [90,127,165]) 
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/gen_br_1.png)
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/gen_br2.png)
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/gen_br3.png)
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/gen_br4.png)
 
-  #### 3.2 Склейка изображений в горизонтальный коллаж
+  #### 3.2 РЎРєР»РµР№РєР° РёР·РѕР±СЂР°Р¶РµРЅРёР№ РІ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Р№ РєРѕР»Р»Р°Р¶
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/collage.png)
 
-  #### 3.3 3.4 Применить шум к коллажам, а затем склеить в вертикальный коллаж
-   - первоначальное 
-	- шум с стандартным отклонением 3
-	- шум с стандартным отклонением 7
-	- шум с стандартным отклонением 15
+  #### 3.3 3.4 РџСЂРёРјРµРЅРёС‚СЊ С€СѓРј Рє РєРѕР»Р»Р°Р¶Р°Рј, Р° Р·Р°С‚РµРј СЃРєР»РµРёС‚СЊ РІ РІРµСЂС‚РёРєР°Р»СЊРЅС‹Р№ РєРѕР»Р»Р°Р¶
+   - РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРµ 
+	- С€СѓРј СЃ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рј РѕС‚РєР»РѕРЅРµРЅРёРµРј 3
+	- С€СѓРј СЃ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рј РѕС‚РєР»РѕРЅРµРЅРёРµРј 7
+	- С€СѓРј СЃ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рј РѕС‚РєР»РѕРЅРµРЅРёРµРј 15
 
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/final_collage.png)
 
-  #### 3.5 Сохранить итоговый результат в файл по указанному в качестве параметра командной строки пути
+  #### 3.5 РЎРѕС…СЂР°РЅРёС‚СЊ РёС‚РѕРіРѕРІС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ РІ С„Р°Р№Р» РїРѕ СѓРєР°Р·Р°РЅРЅРѕРјСѓ РІ РєР°С‡РµСЃС‚РІРµ РїР°СЂР°РјРµС‚СЂР° РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё РїСѓС‚Рё
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/final.png)
 
-  #### Сравнение характеристик исходного изображения и зашумленного
+  #### РЎСЂР°РІРЅРµРЅРёРµ С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРє РёСЃС…РѕРґРЅРѕРіРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Рё Р·Р°С€СѓРјР»РµРЅРЅРѕРіРѕ
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/table.png)
 
-  #### Коллаж гистограмм яркости зашумленных изображений
+  #### РљРѕР»Р»Р°Р¶ РіРёСЃС‚РѕРіСЂР°РјРј СЏСЂРєРѕСЃС‚Рё Р·Р°С€СѓРјР»РµРЅРЅС‹С… РёР·РѕР±СЂР°Р¶РµРЅРёР№
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab2/histBRCollage.png)
