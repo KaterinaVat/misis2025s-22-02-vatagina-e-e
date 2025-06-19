@@ -24,22 +24,22 @@ cv::Mat kernel1 = (cv::Mat_<float>(3, 3) <<
     0, 1, 2,
     -1, 0, 1,
     -2, -1, 0);
-  '''
+```
 
   - фильтрация с ядром I2
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab5/3.png)
-'''cpp
+```cpp
 	cv::Mat kernel2 = (cv::Mat_<float>(3, 3) <<
 		2, 1, 0,
 		1, 0, -1,
 		0, -1, -2);
-  '''
+```
 
   - фильтрация с ядром I3
   ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab5/4.png)
-'''cpp
+```cpp
 I1 = sqrt(I1+I2)
-  '''
+```
 
 - RGB-изображение
  ![](https://github.com/KaterinaVat/misis2025s-3-vatagina-e-e/blob/main/assests/lab5/5.png)
